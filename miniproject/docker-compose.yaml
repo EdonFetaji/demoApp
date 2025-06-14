@@ -1,0 +1,52 @@
+version: '3'
+
+services:
+  db:
+    image: mysql:latest
+    environment:
+      - MYSQL_ROOT_PASSWORD=password_123
+      - MYSQL_DATABASE=taskdb
+    networks:
+      - backend
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      interval: 10s
+      retries: 5
+
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  backend:
+    build: ./backend
+    command: python app.py
+    restart: on-failure:5
+    networks:
+      - backend
+      - web
+    environment:
+      - DB_HOST=db
+      - DB_USER=root
+      - DB_PASSWORD=password_123
+    depends_on:
+      - db
+
+  frontend:
+    build: ./frontend
+    command: streamlit run app.py
+    networks:
+      - web
+    environment:
+      - BACKEND_HOST=backend
+      - BACKEND_PORT=5000
+    ports:
+      - "80:8501"
+    depends_on:
+      - backend
+
+volumes:
+  mysql_data:
+networks:
+  web:
+    driver: bridge
+  backend:
+    driver: bridge
