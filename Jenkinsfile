@@ -4,12 +4,14 @@ node {
     def latestTag = "${env.BRANCH_NAME}-latest"
 
     stage('Clone Repository') {
-        checkout([$class: 'GitSCM',
-  branches: [[name: '*/main']],
-  userRemoteConfigs: [[
-    url: 'https://github.com/EdonFetaji/demoApp.git',
-    credentialsId: 'github-credentials'
-  ]]
+  //       checkout([$class: 'GitSCM',
+  // branches: [[name: '*/main']],
+  // userRemoteConfigs: [[
+  //   url: 'https://github.com/EdonFetaji/demoApp.git',
+  //   credentialsId: 'github-credentials'
+  // ]]
+
+        checkout scm
 ])
 
     }
